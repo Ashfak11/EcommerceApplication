@@ -12,38 +12,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 
-//@RestController
-//@RequestMapping("/api")
-//@CrossOrigin
-//public class ProductController {
-//
-//    @Autowired
-//    private ProductService productService;
-//
-//    @GetMapping("/products")
-//    public ResponseEntity<List<Product>> getProducts(){
-//        return new ResponseEntity<>(productService.getAllProducts(), HttpStatus.ACCEPTED);
-//    }
-//
-//    //Fetch Product By Id
-////    @GetMapping("/product/{id}")
-////    public ResponseEntity<Product> getProductById(@PathVariable int id) {
-////        Product product = productService.getProductById(id);
-////        if (product.getId() > 0) {
-////            return new ResponseEntity<>(product, HttpStatus.OK);
-////        } else {
-////            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-////        }
-////    }
-//    @GetMapping("/product/{id}")
-//    public ResponseEntity<Product> getProductById(@PathVariable int id) {
-//        Product product = productService.getProductById(id);
-//        return product != null
-//                ? new ResponseEntity<>(product, HttpStatus.OK)
-//                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//    }
-//}
-
 @RestController
 @RequestMapping("/api")
 @CrossOrigin
@@ -66,6 +34,7 @@ public class ProductController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
     //Fetching image
     @GetMapping("/product/{productId}/image")
     public ResponseEntity<byte[]> getProductImage(@PathVariable int productId) {
@@ -76,16 +45,45 @@ public class ProductController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
     //For adding images
     @PostMapping("/product")
     public ResponseEntity<?> addProduct(@RequestPart Product product, @RequestPart MultipartFile imageFile) {
         Product savedProduct = null;
         try {
-            savedProduct = productService.addProduct(product, imageFile);
+            savedProduct = productService.addOrUpdateProduct(product, imageFile);
             return new ResponseEntity<>(savedProduct, HttpStatus.CREATED);
         } catch (IOException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
+
+    //Updating the existing stuffs
+    @PutMapping("/product/{id}")
+    public ResponseEntity<String> updateProduct(@PathVariable int id, @RequestPart Product product, @RequestPart MultipartFile imageFile) //your method doesn’t accept the JSON Product that frontend sends in request body. You need both id and @RequestBody Product updatedProduct.
+    {
+        Product updatedProduct = null;
+        try {
+            updatedProduct = productService.addOrUpdateProduct(product, imageFile);
+            return new ResponseEntity<>("Updated", HttpStatus.OK);
+        } catch (IOException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @DeleteMapping ("/product/{id}"){
+        public ResponseEntity<String> deleteProduct(@PathVariable int id){
+           Product product = productService.getProductById(id);
+           if(product != null){
+               productService.deleteProduct(id);
+               return new ResponseEntity<>("Deleted",HttpStatus.OK);
+
+           }
+            else
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        }
+    }
+
 }

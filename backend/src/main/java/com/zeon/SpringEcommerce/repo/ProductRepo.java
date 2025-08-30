@@ -7,6 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ProductRepo extends JpaRepository<Product, Integer> { //basically it maps to <Product which has tables given and then Integer> that is the @Id type
-//    @Query(value = "SELECT * FROM product", nativeQuery = true)
-//    List<Product> findAllProducts();
+
 }
