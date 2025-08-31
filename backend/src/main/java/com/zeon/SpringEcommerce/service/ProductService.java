@@ -38,6 +38,10 @@ public class ProductService {
 
         return productRepo.save(product);
     }
+
+    public void deleteProduct(int id) {
+        productRepo.deleteById(id);
+    }
 //His approach on updating
 //    public Product updateProduct(Product product, MultipartFile image) throws IOException {
 //        product.setImageName(image.getOriginalFilename());
